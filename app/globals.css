@@ -17,5 +17,17 @@
 }
 
 body {
+}
 
+.ant-input,
+.ant-input-password, .ant-select-selector {
+  background: #fafafb !important;
+  border-radius: 15px !important;
+}
+.ant-col {
+  max-width: 100% !important;
+}
+
+.ant-btn {
+  box-shadow: none !important; /* Remove the box-shadow */
 }

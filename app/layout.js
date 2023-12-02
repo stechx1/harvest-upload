@@ -1,6 +1,8 @@
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import StyledComponentsRegistry from '../lib/AntRegistry';
+import { ConfigProvider } from 'antd';
+import theme from '../theme/themeConfig';
 
 const inter = Poppins({
   subsets: ['latin'],
@@ -16,7 +18,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        <StyledComponentsRegistry>
+          <ConfigProvider theme={theme}>{children}</ConfigProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
