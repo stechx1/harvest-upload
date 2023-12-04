@@ -20,9 +20,13 @@ body {
 }
 
 .ant-input,
-.ant-input-password, .ant-select-selector {
+.ant-input-password, .ant-select-selector, .ant-input-number, .ant-picker {
   background: #fafafb !important;
   border-radius: 15px !important;
+}
+
+.ant-input-number, .ant-picker{
+  width: 100% !important;
 }
 .ant-col {
   max-width: 100% !important;
