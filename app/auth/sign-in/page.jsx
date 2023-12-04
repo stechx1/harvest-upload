@@ -1,7 +1,5 @@
 'use client';
 import { Button, Form, Input, Select } from 'antd';
-import InputMask from 'react-input-mask';
-import { states } from '../../../data/states';
 
 import React from 'react';
 import Link from 'next/link';
