@@ -1,10 +1,17 @@
 'use client';
-import { Upload } from '../components';
+// import { Upload } from '../components';
+import { useState } from 'react';
 import { Navbar } from '../components/Navbar';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+
 import { ImageUpload } from '../components/ImageUpload';
+import { message, Upload } from 'antd';
 import { Button, Form, Input, InputNumber, DatePicker } from 'antd';
 
 const UploadInventory = () => {
+  const [imageUrl, setImageUrl] = useState();
+  const [loading, setLoading] = useState(false);
+
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -22,6 +29,45 @@ const UploadInventory = () => {
     console.log('Changed values:', changedValues);
     console.log('All values:', allValues);
   };
+
+  const handleChange = (info) => {
+    if (info.file.status === 'uploading') {
+      setLoading(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, (url) => {
+        setLoading(false);
+        setImageUrl(url);
+      });
+    }
+  };
+
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  };
+
+  const uploadButton = (
+    <div>
+      {/* {loading ? <LoadingOutlined /> : <PlusOutlined />} */}
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload
+      </div>
+    </div>
+  );
   return (
     <div className='container mx-auto'>
       <Navbar />
@@ -81,7 +127,45 @@ const UploadInventory = () => {
                 <InputNumber placeholder='1' />
               </Form.Item>
 
-              <Form.Item
+               <Form.Item
+                label='Pictures (5 Max)'
+                style={{
+                  maxWidth: '100%',
+                }}
+                name='quantity'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your quantity!',
+                  },
+                ]}
+              >
+                 <Upload
+                name='avatar'
+                listType='picture-card'
+                className='avatar-uploader'
+                showUploadList={false}
+                action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188'
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt='avatar'
+                    style={{
+                      width: '100%',
+                    }}
+                  />
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+              </Form.Item>
+
+             
+
+              {/* <Form.Item
                 label='Quantity (LBS)'
                 style={{
                   maxWidth: '100%',
@@ -94,7 +178,6 @@ const UploadInventory = () => {
                   },
                 ]}
               >
-                {/* <Upload /> */}
                 <ImageUpload
                   type='image'
                   value={form.fields?.value.map((image) => image.url)}
@@ -107,7 +190,7 @@ const UploadInventory = () => {
                     ])
                   }
                 />
-              </Form.Item>
+              </Form.Item> */}
             </div>
 
             <div className='flex flex-col space-y-6'>
@@ -142,6 +225,42 @@ const UploadInventory = () => {
               >
                 <InputNumber placeholder='$ 10' />
               </Form.Item>
+
+              <Form.Item
+                label='Video (1 Max)'
+                style={{
+                  maxWidth: '100%',
+                }}
+                name='quantity'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your quantity!',
+                  },
+                ]}
+              >
+                 <Upload
+                name='avatar'
+                listType='picture-card'
+                className='avatar-uploader'
+                showUploadList={false}
+                action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188'
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+              >
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt='avatar'
+                    style={{
+                      width: '100%',
+                    }}
+                  />
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+              </Form.Item>
             </div>
           </div>
           <Form.Item
@@ -150,7 +269,7 @@ const UploadInventory = () => {
               span: 16,
             }}
           >
-            <Button type='primary' htmlType='submit'>
+            <Button className='mt-12' type='primary' htmlType='submit'>
               Submit
             </Button>
           </Form.Item>
