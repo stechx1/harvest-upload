@@ -1,9 +1,22 @@
+'use client';
 import { Button, Table } from 'antd';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { PlusOutlined } from '@ant-design/icons';
+import { signIn, useSession } from 'next-auth/react';
+
 import { Navbar } from '../app/components';
 
 /* eslint-disable @next/next/no-img-element */
 export default function Home() {
+  const router = useRouter();
+
+  const { data: session, status: sessionStatus } = useSession();
+  useEffect(() => {
+    if (sessionStatus !== 'authenticated') {
+      router.replace('/auth/sign-in');
+    }
+  }, [sessionStatus]);
   const dataSource = [
     {
       key: '1',

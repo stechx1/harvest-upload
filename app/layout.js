@@ -3,6 +3,8 @@ import './globals.css';
 import StyledComponentsRegistry from '../lib/AntRegistry';
 import { ConfigProvider } from 'antd';
 import theme from '../theme/themeConfig';
+import { getServerSession } from 'next-auth';
+import SessionProvider from '../lib/SessionProvider';
 
 const inter = Poppins({
   subsets: ['latin'],
@@ -14,12 +16,15 @@ export const metadata = {
   description: 'Inventory uploading',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const session = await getServerSession();
   return (
     <html lang='en'>
       <body className={inter.className}>
         <StyledComponentsRegistry>
-          <ConfigProvider theme={theme}>{children}</ConfigProvider>
+          <ConfigProvider theme={theme}>
+            <SessionProvider session={session}>{children}</SessionProvider>
+          </ConfigProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

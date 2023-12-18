@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { PlusOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { signOut } from 'next-auth/react';
 
 export const Navbar = () => {
   return (
@@ -14,6 +15,9 @@ export const Navbar = () => {
         <li>Inventory</li>
         <Button type='primary' icon={<PlusOutlined />}>
           Upload Inventory
+        </Button>
+        <Button onClick={signOut} type='default'>
+          Sign Out
         </Button>
       </ul>
     </nav>
