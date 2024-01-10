@@ -7,22 +7,59 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { ImageUpload } from '../components/ImageUpload';
 import { message, Upload } from 'antd';
 import { Button, Form, Input, InputNumber, DatePicker } from 'antd';
+import { X } from 'lucide-react';
+import axios from 'axios';
 
 const UploadInventory = () => {
-  const [imageUrl, setImageUrl] = useState();
+  const [imageUrl, setImageUrl] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [video,setVideo] = useState(null)
+  const [date,setDate] = useState(null)
 
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
+  const onFinish =async (values) => {
+  
+    setLoading(true)   
+    const getImageObj = imageUrl.map(item=>{return item.originFileObj})
+    
+    const formData = new FormData()
+    for (const img of getImageObj) {
+      formData.append("pictures[]", img);
+    }
+    formData.append('video',video)
+    
+    formData.append('harvestDate',date)
+    formData.append('askingPrice',values.askingPrice)
+    formData.append('quantityLBS',values.quantityLBS)
+    formData.append('strain',values.strain)
+    try {
+      const response = await axios.post('/api/upload',formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      })
+      console.log("response.data ",response.data)
+      setImageUrl([])
+      setVideo(null)
+      setDate(null)
+    } catch (error) {
+      console.log("error => ",error)
+    } 
+    finally{
+         setLoading(false)
+    }
+    
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
   const onDateChange = (date, dateString) => {
-    console.log(date, dateString);
+    console.log(dateString);
+    setDate(dateString)
   };
+
+
 
   const onFormValuesChange = (changedValues, allValues) => {
     // Update form values when the ImageUpload component changes
@@ -30,31 +67,42 @@ const UploadInventory = () => {
     console.log('All values:', allValues);
   };
 
-  const handleChange = (info) => {
-    if (info.file.status === 'uploading') {
-      setLoading(true);
-      return;
+  const handleChange = (type,info) => {
+
+    console.log("info ==> ",info)
+    if(type == 'picture'){
+      const arrayOfImage = Array.from(info.fileList)
+      
+    if(arrayOfImage.length >5){
+      console.log("You are allowed to upload only 5 images.")
     }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
+    else{
+      // Update the state with the selected files and their previews
+    setImageUrl(arrayOfImage);
     }
+    }
+    else{
+      console.log("video ",info)
+      setVideo(info?.file?.originFileObj)
+ }
+  }        
+      
+  
+
+  const beforeUpload = (type,file) => {
+      
+    if(type == 'picture'){
+     
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+      
+      return isJpgOrPng && isLt2M;
+    }
+  }
   };
 
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-  };
+  
 
   const uploadButton = (
     <div>
@@ -77,6 +125,7 @@ const UploadInventory = () => {
         </h1>
 
         <Form
+         
           layout='vertical'
           name='basic'
           wrapperCol={{
@@ -116,7 +165,7 @@ const UploadInventory = () => {
                 style={{
                   maxWidth: '100%',
                 }}
-                name='quantity'
+                name='quantityLBS'
                 rules={[
                   {
                     required: true,
@@ -132,7 +181,7 @@ const UploadInventory = () => {
                 style={{
                   maxWidth: '100%',
                 }}
-                name='quantity'
+                name='pictures'
                 rules={[
                   {
                     required: true,
@@ -145,22 +194,26 @@ const UploadInventory = () => {
                 listType='picture-card'
                 className='avatar-uploader'
                 showUploadList={false}
-                action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188'
-                beforeUpload={beforeUpload}
-                onChange={handleChange}
+                multiple={true}
+               maxCount={3}
+                accept='image/*'
+                beforeUpload={(e)=>beforeUpload('picture',e)}
+                onChange={(e)=>handleChange('picture',e)}
               >
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt='avatar'
-                    style={{
-                      width: '100%',
-                    }}
-                  />
-                ) : (
-                  uploadButton
-                )}
+                {uploadButton}
               </Upload>
+              {imageUrl.length > 0 && imageUrl.map((item,index)=>
+                      (
+                        <div key={index} className='w-full  h-12 flex items-center justify-between border border-slate-200 rounded p-1'>
+                         <img
+                           src={URL.createObjectURL(item && item.originFileObj)}
+                           alt='avatar'
+                           className='w-9 h-full'
+                         />
+                         <div className='cursor-pointer' onClick={()=>setImageUrl(pre=>pre.filter(img=>img != item))}><X/></div>
+                         </div>
+                       )
+              ) }
               </Form.Item>
 
              
@@ -199,7 +252,7 @@ const UploadInventory = () => {
                 style={{
                   maxWidth: '100%',
                 }}
-                name='date'
+                name='harvestDate'
                 rules={[
                   {
                     required: true,
@@ -215,7 +268,7 @@ const UploadInventory = () => {
                 style={{
                   maxWidth: '100%',
                 }}
-                name='price'
+                name='askingPrice'
                 rules={[
                   {
                     required: true,
@@ -231,7 +284,7 @@ const UploadInventory = () => {
                 style={{
                   maxWidth: '100%',
                 }}
-                name='quantity'
+                name='video'
                 rules={[
                   {
                     required: true,
@@ -243,23 +296,21 @@ const UploadInventory = () => {
                 name='avatar'
                 listType='picture-card'
                 className='avatar-uploader'
-                showUploadList={false}
-                action='https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188'
-                beforeUpload={beforeUpload}
-                onChange={handleChange}
+                showUploadList={false}            
+                // beforeUpload={beforeUpload}
+                accept='video/*'
+                onChange={(e)=>handleChange('video',e)}
               >
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt='avatar'
-                    style={{
-                      width: '100%',
-                    }}
-                  />
-                ) : (
-                  uploadButton
-                )}
+               {uploadButton}
               </Upload>
+              {video && (
+                <div className='w-full h-24 flex relative'>
+                  <video controls className='h-full w-full'>
+                    <source src={URL.createObjectURL(video)} type="video/mp4" />
+                  </video>
+                  <div className='cursor-pointer absolute -top-5 -right-3' onClick={()=>setVideo(null)}><X/></div>
+                </div>
+                ) }
               </Form.Item>
             </div>
           </div>
@@ -269,8 +320,8 @@ const UploadInventory = () => {
               span: 16,
             }}
           >
-            <Button className='mt-12' type='primary' htmlType='submit'>
-              Submit
+            <Button className='mt-12' type='primary' disabled={loading?true:false} htmlType='submit'>
+              {loading? 'Submitting' : 'Submit'}
             </Button>
           </Form.Item>
         </Form>

@@ -3,7 +3,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { signOut } from 'next-auth/react';
 
+
 export const Navbar = () => {
+  
   return (
     <nav className='flex justify-between py-6'>
       <div className='flex gap-2'>

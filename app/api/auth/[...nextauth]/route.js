@@ -1,7 +1,8 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '../../../../models/User';
-import connect from '../../../../lib/db';
+import { connect } from '@/lib/db';
+connect()
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -14,7 +15,7 @@ export const authOptions = {
         password: { label: 'password', type: 'password' },
       },
       async authorize(credentials) {
-        await connect();
+        
         try {
           const user = await User.findOne({ farmName: credentials.farmName });
           if (user) {

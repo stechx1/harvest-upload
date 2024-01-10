@@ -1,12 +1,14 @@
+import { connect } from '@/lib/db';
 import User from '../../../models/User';
-import connect from '../../../lib/db';
+
 import bcrypt from 'bcryptjs';
 
+connect()
 export const POST = async (request) => {
   const { farmName, licenseNo, state, name, phoneNo, password } =
     await request.json();
 
-  await connect();
+
 
   const existingUser = await User.findOne({ farmName });
 

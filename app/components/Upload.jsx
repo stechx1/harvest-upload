@@ -1,7 +1,8 @@
-import { CldUploadWidget } from 'next-cloudinary';
+import { CldUploadWidget,getCldImageUrl } from 'next-cloudinary';
 import { Button } from 'antd';
 
 export const Upload = () => {
+  
   return (
     <CldUploadWidget uploadPreset='ganjaland' htmlType='button'>
       {({ open }) => {

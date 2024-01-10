@@ -24,7 +24,7 @@ const Register = () => {
   };
 
   const onFinish = async (values) => {
-    console.log('Success:', values);
+    
     const farmName = values['Farm Name'];
     const licenseNo = values['License No'];
     const state = values['State'];
