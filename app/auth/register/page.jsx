@@ -4,11 +4,12 @@ import InputMask from 'react-input-mask';
 import { states } from '../../../data/states';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 const Register = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const { data: session, status: sessionStatus } = useSession();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const Register = () => {
   };
 
   const onFinish = async (values) => {
-    
+    setLoading(true);
     const farmName = values['Farm Name'];
     const licenseNo = values['License No'];
     const state = values['State'];
@@ -57,6 +58,7 @@ const Register = () => {
       alert('Error, try again');
       console.log(e);
     }
+    setLoading(false);
   };
 
   if (sessionStatus === 'loading') {
@@ -75,7 +77,7 @@ const Register = () => {
     sessionStatus !== 'authenticated' && (
       <div className=' container mx-auto h-screen flex justify-center items-center'>
         <div className='flex flex-col justify-center items-center space-y-10'>
-          <h1 className='text-4xl font-bold text-white'>Ganjaland</h1>
+          <h1 className='text-4xl font-bold text-white'>Harvest Upload</h1>
           <div className='rounded-2xl bg-white max-w-lg min-h-[515px] px-20 pt-12 pb-3'>
             <h2 className='font-bold text-lg'>Sign Up to create an account</h2>
             <Form
@@ -202,7 +204,7 @@ const Register = () => {
                   span: 16,
                 }}
               >
-                <Button type='primary' htmlType='submit'>
+                <Button loading={loading} type='primary' htmlType='submit'>
                   Submit
                 </Button>
               </Form.Item>
@@ -212,7 +214,7 @@ const Register = () => {
               className='text-xs text-primary font-bold'
               href={'/auth/sign-in'}
             >
-              Already have an Ganjaland account? Log in
+              Already have an Harvest Upload account? Log in
             </Link>
           </div>
         </div>
