@@ -1,8 +1,9 @@
 'use client';
 import { Button, Table } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PlusOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import { signIn, useSession } from 'next-auth/react';
 
 import { Navbar } from '../app/components';
@@ -10,6 +11,7 @@ import { Navbar } from '../app/components';
 /* eslint-disable @next/next/no-img-element */
 export default function Home() {
   const router = useRouter();
+  const [dataSource, setDataSource] = useState([]);
 
   const { data: session, status: sessionStatus } = useSession();
   useEffect(() => {
@@ -17,38 +19,49 @@ export default function Home() {
       router.replace('/auth/sign-in');
     }
   }, [sessionStatus]);
-  const dataSource = [
-    {
-      key: '1',
-      strain: 'Blue Dream',
-      date: '2023-12-01',
-      quantity: '10',
-      price: '$150',
-      pictures: 'Link to Picture 1',
-      videos: 'Link to Video 1',
-      onOff: 'On',
-    },
-    {
-      key: '2',
-      strain: 'OG Kush',
-      date: '2023-11-25',
-      quantity: '8',
-      price: '$200',
-      pictures: 'Link to Picture 2',
-      videos: 'Link to Video 2',
-      onOff: 'Off',
-    },
-    {
-      key: '3',
-      strain: 'Girl Scout Cookies',
-      date: '2023-12-05',
-      quantity: '12',
-      price: '$180',
-      pictures: 'Link to Picture 3',
-      videos: 'Link to Video 3',
-      onOff: 'On',
-    },
-  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios('/api/upload'); // replace with your API endpoint
+      setDataSource(result.data);
+    };
+
+    console.log(dataSource);
+    fetchData();
+  }, []);
+
+  // const dataSource = [
+  //   {
+  //     key: '1',
+  //     strain: 'Blue Dream',
+  //     date: '2023-12-01',
+  //     quantity: '10',
+  //     price: '$150',
+  //     pictures: 'Link to Picture 1',
+  //     videos: 'Link to Video 1',
+  //     onOff: 'On',
+  //   },
+  //   {
+  //     key: '2',
+  //     strain: 'OG Kush',
+  //     date: '2023-11-25',
+  //     quantity: '8',
+  //     price: '$200',
+  //     pictures: 'Link to Picture 2',
+  //     videos: 'Link to Video 2',
+  //     onOff: 'Off',
+  //   },
+  //   {
+  //     key: '3',
+  //     strain: 'Girl Scout Cookies',
+  //     date: '2023-12-05',
+  //     quantity: '12',
+  //     price: '$180',
+  //     pictures: 'Link to Picture 3',
+  //     videos: 'Link to Video 3',
+  //     onOff: 'On',
+  //   },
+  // ];
 
   const columns = [
     {
@@ -58,28 +71,48 @@ export default function Home() {
     },
     {
       title: 'Harvest Date',
-      dataIndex: 'date',
-      key: 'date',
+      dataIndex: 'harvestDate',
+      key: 'harvestDate',
     },
     {
       title: 'Quantity (LBS)',
-      dataIndex: 'quantity',
+      dataIndex: 'quantityLBS',
       key: 'quantity',
     },
     {
       title: 'Asking Price (xLBS)',
-      dataIndex: 'price',
+      dataIndex: 'askingPrice',
       key: 'price',
+      render: (text) => `$${text}`,
     },
     {
       title: 'Pictures',
       dataIndex: 'pictures',
       key: 'pictures',
+      render: (pictures) => (
+        <div>
+          {pictures.map((picture, index) => (
+            <a
+              key={index}
+              href={picture}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              <img
+                src={picture}
+                alt='preview'
+                style={{ width: '60px', height: '60px' }}
+              />
+            </a>
+          ))}
+        </div>
+      ),
     },
     {
       title: 'Videos',
-      dataIndex: 'videos',
+      dataIndex: 'video',
       key: 'videos',
+      render: (videoLink) => <a target='_blank' href={videoLink}>Link to Video</a>
     },
     {
       title: 'On/Off',

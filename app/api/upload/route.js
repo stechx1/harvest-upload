@@ -10,23 +10,27 @@ cloudinaryConnect();
 connect();
 
 export async function POST(request) {
-  
-
   try {
     const data = await request.formData();
     const videoFile = data.get('video');
 
-    const videoUrl = await videoUpload(videoFile)
-    if(!videoUrl){
-            return NextResponse.json({message:'something went wrong'},{status:400})
+    const videoUrl = await videoUpload(videoFile);
+    if (!videoUrl) {
+      return NextResponse.json(
+        { message: 'something went wrong' },
+        { status: 400 }
+      );
     }
-    const imageUrls = await UploadImage(data.getAll('pictures[]'))
-    console.log("images uri ",data.getAll('pictures'))
-    if(!imageUrls){
-           return NextResponse.json({message:"no image url found "},{status:400})
+    const imageUrls = await UploadImage(data.getAll('pictures[]'));
+    console.log('images uri ', data.getAll('pictures'));
+    if (!imageUrls) {
+      return NextResponse.json(
+        { message: 'no image url found ' },
+        { status: 400 }
+      );
     }
     // Upload the video to Cloudinary and get the URL
-     console.log("image urls ",imageUrls)
+    console.log('image urls ', imageUrls);
 
     // Create a new Strain item with the obtained video URL
     const newStrainItem = new Strain({
@@ -41,25 +45,21 @@ export async function POST(request) {
     const savedItem = await newStrainItem.save();
     console.log('Saved Item:', savedItem);
 
-    return NextResponse.json({data:savedItem}, { status: 200 });
-  }
-
-   catch (error) {
-    
+    return NextResponse.json({ data: savedItem }, { status: 200 });
+  } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
-
 }
 
-// export const GET = async () => {
-//   await connect();
-//   try {
-//     const strainItems = await Strain.find();
-//     return new Response(JSON.stringify(strainItems), { status: 200 });
-//   } catch (err) {
-//     return new Response(err, { status: 500 });
-//   }
-// };
+export const GET = async () => {
+  await connect();
+  try {
+    const strainItems = await Strain.find();
+    return new Response(JSON.stringify(strainItems), { status: 200 });
+  } catch (err) {
+    return new Response(err, { status: 500 });
+  }
+};
 
 // export const PUT = async (request) => {
 //   await connect();
