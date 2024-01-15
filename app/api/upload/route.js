@@ -98,14 +98,14 @@ export const GET = async () => {
 //   }
 // };
 
-// export const DELETE = async (request) => {
-//   await connect();
-//   const { id } = await request.json();
+export const DELETE = async (request) => {
+  await connect();
+  const { id } = await request.json();
 
-//   try {
-//     await Strain.findByIdAndDelete(id);
-//     return new Response('Deleted Product Item', { status: 200 });
-//   } catch (err) {
-//     return new Response(err, { status: 500 });
-//   }
-// };
+  try {
+    await Strain.findByIdAndDelete(id);
+    return new Response('Deleted Product Item', { status: 200 });
+  } catch (err) {
+    return new Response(err, { status: 500 });
+  }
+};

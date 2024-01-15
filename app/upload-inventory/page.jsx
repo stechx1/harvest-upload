@@ -188,7 +188,7 @@ const UploadInventory = () => {
                   className='avatar-uploader'
                   showUploadList={false}
                   multiple={true}
-                  maxCount={3}
+                  maxCount={5}
                   accept='image/*'
                   beforeUpload={(e) => beforeUpload('picture', e)}
                   onChange={(e) => handleChange('picture', e)}
@@ -199,7 +199,7 @@ const UploadInventory = () => {
                   imageUrl.map((item, index) => (
                     <div
                       key={index}
-                      className='w-full  h-12 flex items-center justify-between border border-slate-200 rounded p-1'
+                      className='w-full  h-12 mb-2 flex items-center justify-between border border-slate-200 rounded p-1'
                     >
                       <img
                         src={URL.createObjectURL(item && item.originFileObj)}
