@@ -7,7 +7,6 @@ import { UploadImage, videoUpload } from '@/lib/uploadimage';
 import { NextResponse } from 'next/server';
 
 cloudinaryConnect();
-connect();
 
 export async function POST(request) {
   try {

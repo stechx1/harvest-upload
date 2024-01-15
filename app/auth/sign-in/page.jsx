@@ -28,8 +28,9 @@ const SignIn = () => {
       password,
     });
     if (res?.error) {
-      alert('Invalid email or password');
+      alert('Invalid email or password. Try Again');
       if (res?.url) router.replace('/');
+      setLoading(false)
     } else {
       setLoading(false)
     }
