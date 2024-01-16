@@ -20,7 +20,7 @@ const StrainItemSchema = new mongoose.Schema({
   },
   pictures: {
       type:Array,
-      default:[String]
+      default:[]
 
   }, // Array of picture URLs
   video: {

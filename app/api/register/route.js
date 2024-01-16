@@ -1,9 +1,10 @@
-import { connect } from '@/lib/db';
+import { connect, isDbConneted } from '@/lib/db';
 import User from '../../../models/User';
 
 import bcrypt from 'bcryptjs';
 
 connect()
+console.log("is db connected ",isDbConneted())
 export const POST = async (request) => {
   const { farmName, licenseNo, state, name, phoneNo, password } =
     await request.json();

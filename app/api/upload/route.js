@@ -1,16 +1,19 @@
 import Strain from '../../../models/Strain';
 import { v2 as cloudinary } from 'cloudinary';
 import cloudinaryConnect from '@/lib/cloudnaryConnect';
-import { connect } from '@/lib/db';
+import { connect, isDbConneted } from '@/lib/db';
 
 import { UploadImage, videoUpload } from '@/lib/uploadimage';
 import { NextResponse } from 'next/server';
 
 cloudinaryConnect();
 connect();
-
+console.log("sDbConneted() ",isDbConneted())
 export async function POST(request) {
   
+  if(!isDbConneted()){
+    return NextResponse.json({message:'Please connect your mongo db instance'},{status:400})
+ }
 
   try {
     const data = await request.formData();
@@ -26,7 +29,7 @@ export async function POST(request) {
            return NextResponse.json({message:"no image url found "},{status:400})
     }
     // Upload the video to Cloudinary and get the URL
-     console.log("image urls ",imageUrls)
+    
 
     // Create a new Strain item with the obtained video URL
     const newStrainItem = new Strain({

@@ -195,7 +195,7 @@ const UploadInventory = () => {
                 className='avatar-uploader'
                 showUploadList={false}
                 multiple={true}
-               maxCount={3}
+               maxCount={5}
                 accept='image/*'
                 beforeUpload={(e)=>beforeUpload('picture',e)}
                 onChange={(e)=>handleChange('picture',e)}
