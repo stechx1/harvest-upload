@@ -12,7 +12,7 @@ const inter = Poppins({
 });
 
 export const metadata = {
-  title: 'Ganjaland',
+  title: 'Harvest Upload',
   description: 'Inventory uploading',
 };
 

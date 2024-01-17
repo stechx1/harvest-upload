@@ -10,6 +10,11 @@ const StrainItemSchema = new mongoose.Schema({
        type:String,
        required:[true,'Please provide a strain name']
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // This references the 'User' model
+    required: true
+  },
   quantityLBS: {
         type:Number,
         required:[true,"Please Provide quantity "]

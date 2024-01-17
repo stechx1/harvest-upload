@@ -1,15 +1,18 @@
 'use client';
 import { Button, Form, Input, Select } from 'antd';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 const SignIn = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const { data: session, status: sessionStatus } = useSession();
-
+  
+  console.log("data ",session)
+  console.log("session status ",sessionStatus)
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
       router.replace('/');
@@ -17,6 +20,7 @@ const SignIn = () => {
   }, [sessionStatus]);
 
   const onFinish = async (values) => {
+    setLoading(true)
     const farmName = values['Farm Name'];
     const password = values['password'];
 
@@ -26,10 +30,11 @@ const SignIn = () => {
       password,
     });
     if (res?.error) {
-      alert('Invalid email or password');
+      alert('Invalid email or password. Try Again');
       if (res?.url) router.replace('/');
+      setLoading(false)
     } else {
-      alert('');
+      setLoading(false)
     }
   };
   const onFinishFailed = (errorInfo) => {
@@ -44,7 +49,7 @@ const SignIn = () => {
     sessionStatus !== 'authenticated' && (
       <div className=' container mx-auto h-screen flex justify-center items-center'>
         <div className='flex flex-col justify-center items-center space-y-10'>
-          <h1 className='text-4xl font-bold text-white'>Ganjaland</h1>
+          <h1 className='text-4xl font-bold text-white'>Harvest Upload</h1>
           <div className='flex flex-col justify-center items-center rounded-2xl bg-white max-w-lg min-h-[315px] px-20 py-8'>
             <h2 className='font-bold text-lg'>Login to your account</h2>
             <Form
@@ -97,7 +102,7 @@ const SignIn = () => {
                   span: 16,
                 }}
               >
-                <Button type='primary' htmlType='submit'>
+                <Button loading={loading} type='primary' htmlType='submit'>
                   Login
                 </Button>
               </Form.Item>

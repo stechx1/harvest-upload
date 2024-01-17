@@ -35,3 +35,7 @@ body {
 .ant-btn {
   box-shadow: none !important; /* Remove the box-shadow */
 }
+
+.ant-btn-primary{
+  background-color: #219653;
+}
