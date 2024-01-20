@@ -1,23 +1,21 @@
-import { connect } from '@/lib/db';
+import { connect, isDbConneted } from '@/lib/db';
 import User from '../../../models/User';
 
-import bcrypt from 'bcryptjs';
-
-connect()
+connect();
+console.log('is db connected ', isDbConneted());
 export const POST = async (request) => {
-  const { farmName, licenseNo, state, name, phoneNo, password } =
+  const { email, farmName, licenseNo, state, name, phoneNo, password } =
     await request.json();
-
-
 
   const existingUser = await User.findOne({ farmName });
 
   if (existingUser) {
-    return new Response('Email is already in use', { status: 400 });
+    return new Response('User is already in use', { status: 400 });
   }
 
   const newUser = new User({
     farmName,
+    email,
     password,
     licenseNo,
     state,

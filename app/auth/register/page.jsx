@@ -27,6 +27,7 @@ const Register = () => {
   const onFinish = async (values) => {
     setLoading(true);
     const farmName = values['Farm Name'];
+    const email = values['Email'];
     const licenseNo = values['License No'];
     const state = values['State'];
     const name = values['Name Contact'];
@@ -41,6 +42,7 @@ const Register = () => {
         },
         body: JSON.stringify({
           farmName,
+          email,
           licenseNo,
           state,
           name,
@@ -49,7 +51,7 @@ const Register = () => {
         }),
       });
       if (res.status === 400) {
-        alert('Email not registered');
+        alert('Error please try again');
       }
       if (res.status === 200) {
         router.push('/');
@@ -110,6 +112,21 @@ const Register = () => {
                 ]}
               >
                 <Input placeholder='Farm Name' />
+              </Form.Item>
+
+              <Form.Item
+                style={{
+                  maxWidth: '100%',
+                }}
+                name='Email'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your email!',
+                  },
+                ]}
+              >
+                <Input type='email' placeholder='Email' />
               </Form.Item>
 
               <Form.Item

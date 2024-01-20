@@ -1,7 +1,8 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '../../../../models/User';
-import { connect } from '@/lib/db';
+import { connect, isDbConneted } from '@/lib/db';
+connect()
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -21,7 +22,7 @@ export const authOptions = {
             const isPasswordCorrect = credentials.password === user.password;
 
             if (isPasswordCorrect) {
-              return user;
+               return user
             }
           }
         } catch (err) {
@@ -31,14 +32,22 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
-  callbacks: {
-    async signIn(user, account) {
-      console.log(user?.account?.provider)
-      if (user?.account?.provider == 'credentials') {
-        return true;
-      }
-    },
+  session: {
+    strategy: 'jwt',
   },
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      return true
+    },
+    
+    async session({ session, user, token }) {
+      return token
+    },
+   
+    
+  },
+  
+  
 };
 
 export const handler = NextAuth(authOptions);

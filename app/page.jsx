@@ -14,6 +14,8 @@ export default function Home() {
   const [dataSource, setDataSource] = useState([]);
 
   const { data: session, status: sessionStatus } = useSession();
+  console.log("data ",session)
+  console.log("session status ",sessionStatus)
   useEffect(() => {
     if (sessionStatus !== 'authenticated') {
       router.replace('/auth/sign-in');
@@ -22,8 +24,9 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios('/api/upload'); // replace with your API endpoint
-      setDataSource(result.data);
+      const result = await axios.get('/api/upload'); // replace with your API endpoint
+      console.log("result ",result)
+      setDataSource(result.data.strainItems);
     };
 
     console.log(dataSource);

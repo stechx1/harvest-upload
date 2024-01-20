@@ -1,16 +1,29 @@
 import Strain from '../../../models/Strain';
 import { v2 as cloudinary } from 'cloudinary';
 import cloudinaryConnect from '@/lib/cloudnaryConnect';
-import { connect } from '@/lib/db';
+import { connect, isDbConneted } from '@/lib/db';
 
 import { UploadImage, videoUpload } from '@/lib/uploadimage';
 import { NextResponse } from 'next/server';
+import {getServerSession,} from 'next-auth'
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+
 
 cloudinaryConnect();
+connect();
+console.log("sDbConneted() ",isDbConneted())
 
-export async function POST(request) {
+
+export async function POST(req,res) {
+ 
+  const session = await getServerSession(authOptions);
+  
+  if(!isDbConneted()){
+    return NextResponse.json({message:'Please connect your mongo db instance'},{status:400})
+ }
+ 
   try {
-    const data = await request.formData();
+    const data = await req.formData();
     const videoFile = data.get('video');
 
     const videoUrl = await videoUpload(videoFile);
@@ -29,6 +42,7 @@ export async function POST(request) {
       );
     }
     // Upload the video to Cloudinary and get the URL
+    
     console.log('image urls ', imageUrls);
 
     // Create a new Strain item with the obtained video URL
@@ -39,6 +53,7 @@ export async function POST(request) {
       askingPrice: data.get('askingPrice'),
       pictures: imageUrls,
       video: videoUrl,
+      user:session?.sub
     });
 
     const savedItem = await newStrainItem.save();
@@ -52,15 +67,17 @@ export async function POST(request) {
 
 export const GET = async () => {
   await connect();
+  const session = await getServerSession(authOptions);
   try {
-    const strainItems = await Strain.find();
-    return new Response(JSON.stringify(strainItems), { status: 200 });
+    const strainItems = await Strain.find({user:session?.sub}).populate('user').exec();
+    console.log("strain item ",strainItems)
+    return NextResponse.json({strainItems}, { status: 200 });
   } catch (err) {
     return new Response(err, { status: 500 });
   }
 };
 
-// export const PUT = async (request) => {
+// export const PUT = async (req) => {
 //   await connect();
 //   const {
 //     id,
@@ -71,13 +88,13 @@ export const GET = async () => {
 //     pictures,
 //     video,
 //     onOff,
-//   } = await request.json();
+//   } = await req.json();
 
 //   if (!id) {
 //     return new Response.json({ message: 'Id required' });
 //   }
 
-//   // Assuming you pass an ID in the request
+//   // Assuming you pass an ID in the req
 //   const strainId = id;
 
 //   console.log(strainId);
@@ -98,9 +115,9 @@ export const GET = async () => {
 //   }
 // };
 
-export const DELETE = async (request) => {
+export const DELETE = async (req) => {
   await connect();
-  const { id } = await request.json();
+  const { id } = await req.json();
 
   try {
     await Strain.findByIdAndDelete(id);
@@ -108,4 +125,4 @@ export const DELETE = async (request) => {
   } catch (err) {
     return new Response(err, { status: 500 });
   }
-};
+}
