@@ -9,6 +9,11 @@ const userSchema = new Schema(
       unique: true,
       required: true,
     },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     licenseNo: {
       type: String,
       required: false,

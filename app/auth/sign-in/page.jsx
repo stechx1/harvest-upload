@@ -10,9 +10,9 @@ const SignIn = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { data: session, status: sessionStatus } = useSession();
-  
-  console.log("data ",session)
-  console.log("session status ",sessionStatus)
+
+  console.log('data ', session);
+  console.log('session status ', sessionStatus);
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
       router.replace('/');
@@ -20,7 +20,7 @@ const SignIn = () => {
   }, [sessionStatus]);
 
   const onFinish = async (values) => {
-    setLoading(true)
+    setLoading(true);
     const farmName = values['Farm Name'];
     const password = values['password'];
 
@@ -32,9 +32,9 @@ const SignIn = () => {
     if (res?.error) {
       alert('Invalid email or password. Try Again');
       if (res?.url) router.replace('/');
-      setLoading(false)
+      setLoading(false);
     } else {
-      setLoading(false)
+      setLoading(false);
     }
   };
   const onFinishFailed = (errorInfo) => {
